@@ -51,15 +51,27 @@ namespace client
                 Exit();
             else if (Keyboard[Key.Right])
             {
+                x1 = x1 - 0.1f;
+                x2 = x2 - 0.1f;
+                x3 = x3 - 0.1f;
+            }
+            else if (Keyboard[Key.Left])
+            {
                 x1 = x1 + 0.1f;
                 x2 = x2 + 0.1f;
                 x3 = x3 + 0.1f;
             }
-            else if (Keyboard[Key.Left])
+            else if (Keyboard[Key.Up])
             {
-                x1 = x1 - 0.1f;
-                x2 = x2 - 0.1f;
-                x3 = x3 - 0.1f;
+                y1 = y1 + 0.1f;
+                y2 = y2 + 0.1f;
+                y3 = y3 + 0.1f;
+            }
+            else if (Keyboard[Key.Down])
+            {
+                y1 = y1 - 0.1f;
+                y2 = y2 - 0.1f;
+                y3 = y3 - 0.1f;
             }
 
 
