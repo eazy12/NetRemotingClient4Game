@@ -9,7 +9,11 @@ namespace client
 {
     class Game : GameWindow
     {
-        float x1, x2, x3, y1, y2, y3;
+        float x1, x2, x3, y1, y2, y3, angle;
+<<<<<<< HEAD
+=======
+        double angleValue;
+>>>>>>> b6c0042604864be657e1eb300e1545fd5e2daf96
 
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
@@ -20,7 +24,14 @@ namespace client
             y2 = -1.0f;
             x3 = 0.0f;
             y3 = 1.0f;
+<<<<<<< HEAD
+            angle = 0.0f;
             
+=======
+            angle = 1;
+            angleValue = 1;
+
+>>>>>>> b6c0042604864be657e1eb300e1545fd5e2daf96
             VSync = VSyncMode.On;
         }
 
@@ -51,18 +62,37 @@ namespace client
                 Exit();
             else if (Keyboard[Key.Right])
             {
-                x1 = x1 + 0.1f;
-                x2 = x2 + 0.1f;
-                x3 = x3 + 0.1f;
-            }
-            else if (Keyboard[Key.Left])
-            {
                 x1 = x1 - 0.1f;
                 x2 = x2 - 0.1f;
                 x3 = x3 - 0.1f;
             }
+            else if (Keyboard[Key.Left])
+            {
+                x1 = x1 + 0.1f;
+                x2 = x2 + 0.1f;
+                x3 = x3 + 0.1f;
+            }
+            else if (Keyboard[Key.Up])
+            {
+<<<<<<< HEAD
+                angle += 5f;
+            }
+            else if (Keyboard[Key.Down])
+            {
+                angle -= 5f;
+=======
+                angle = angle + 1;
+            }
+            else if (Keyboard[Key.Down])
+            {
+                angle = angle - 1;
+>>>>>>> b6c0042604864be657e1eb300e1545fd5e2daf96
+            }
 
-
+            if (Math.Abs(angle) > 360)
+            {
+                angle = 0;
+            }
 
         }
 
@@ -76,6 +106,24 @@ namespace client
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref modelview);
 
+            GL.PushMatrix();
+
+            GL.Rotate(angle, 0, 0, 1);
+
+            GL.Begin(BeginMode.Triangles);
+
+            GL.Color3(1.0f, 1.0f, 0.0f); GL.Vertex3(x1 * Math.Cos(angle * Math.PI / 180.0f), y1 * Math.Sin((90-angle) * Math.PI / 180.0f), 4.0f);
+            GL.Color3(1.0f, 0.0f, 0.0f); GL.Vertex3(x2 * Math.Cos(angle * Math.PI / 180.0f), y2 * Math.Sin((90-angle) * Math.PI / 180.0f), 4.0f);
+            GL.Color3(0.2f, 0.9f, 1.0f); GL.Vertex3(x3 * Math.Cos(angle * Math.PI / 180.0f), y3 * Math.Sin((90-angle) * Math.PI / 180.0f), 4.0f);
+
+            GL.End();
+
+            GL.PopMatrix();
+
+            GL.PushMatrix();
+
+            GL.Translate(1.0f, 0, 0);
+
             GL.Begin(BeginMode.Triangles);
 
             GL.Color3(1.0f, 1.0f, 0.0f); GL.Vertex3(x1, y1, 4.0f);
@@ -83,6 +131,8 @@ namespace client
             GL.Color3(0.2f, 0.9f, 1.0f); GL.Vertex3(x3, y3, 4.0f);
 
             GL.End();
+
+            GL.PopMatrix();
 
             SwapBuffers();
         }
