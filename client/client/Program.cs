@@ -7,10 +7,10 @@ using OpenTK.Input;
 
 namespace client
 {
+
     class Game : GameWindow
     {
         float x1, x2, x3, y1, y2, y3, angle;
-        double angleValue;
 
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
@@ -22,7 +22,8 @@ namespace client
             x3 = 0.0f;
             y3 = 1.0f;
             angle = 1;
-            angleValue = 1;
+
+            Tank tank1 = new Tank(0, 0, 30);
 
             VSync = VSyncMode.On;
         }
