@@ -7,24 +7,15 @@ using OpenTK.Input;
 
 namespace client
 {
-
     class Game : GameWindow
     {
-        float x1, x2, x3, y1, y2, y3, angle;
+        Tank tank1, tank2;
 
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
         {
-            x1 = -1.0f;
-            y1 = -1.0f;
-            x2 = 1.0f;
-            y2 = -1.0f;
-            x3 = 0.0f;
-            y3 = 1.0f;
-            angle = 1;
-
-            Tank tank1 = new Tank(0, 0, 30);
-
+            tank1 = new Tank(0, 0, 0);
+            tank2 = new Tank(0.3f, 0, 0);
             VSync = VSyncMode.On;
         }
 
@@ -55,28 +46,44 @@ namespace client
                 Exit();
             else if (Keyboard[Key.Right])
             {
-                x1 = x1 - 0.1f;
-                x2 = x2 - 0.1f;
-                x3 = x3 - 0.1f;
+                tank1.x -= 0.1f;
+                tank2.x -= 0.1f;
             }
             else if (Keyboard[Key.Left])
             {
-                x1 = x1 + 0.1f;
-                x2 = x2 + 0.1f;
-                x3 = x3 + 0.1f;
+                tank1.x += 0.1f;
+                tank2.x += 0.1f;
             }
             else if (Keyboard[Key.Up])
             {
-                angle = angle + 1;
+                tank1.angleDula +=  10;
+                tank2.angleDula += 10;
             }
             else if (Keyboard[Key.Down])
             {
-                angle = angle - 1;
+                tank1.angleDula -= 10;
+                tank2.angleDula -= 10;
+            }
+            else if (Keyboard[Key.PageUp])
+            {
+                tank1.angleTank += 10;
+                tank2.angleTank += 10;
+            }
+            else if (Keyboard[Key.PageDown])
+            {
+                tank1.angleTank -= 10;
+                tank2.angleTank -= 10;
             }
 
-            if (Math.Abs(angle) > 360)
+            if (tank1.angleDula > 65)
             {
-                angle = 0;
+                tank1.angleDula = 65;
+                tank2.angleDula = 65;
+            }
+            else if (tank1.angleDula < -15)
+            {
+                tank1.angleDula = -15;
+                tank2.angleDula = -15;
             }
 
         }
@@ -91,35 +98,41 @@ namespace client
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref modelview);
 
-            GL.PushMatrix();
-
-            GL.Rotate(angle, 0, 0, 1);
-
-            GL.Begin(BeginMode.Triangles);
-
-            GL.Color3(1.0f, 1.0f, 0.0f); GL.Vertex3(x1, y1, 4.0f);
-            GL.Color3(1.0f, 0.0f, 0.0f); GL.Vertex3(x2, y2, 4.0f);
-            GL.Color3(0.2f, 0.9f, 1.0f); GL.Vertex3(x3, y3, 4.0f);
-
-            GL.End();
-
-            GL.PopMatrix();
-
-            GL.PushMatrix();
-
-            GL.Translate(1.0f, 0, 0);
-
-            GL.Begin(BeginMode.Triangles);
-
-            GL.Color3(1.0f, 1.0f, 0.0f); GL.Vertex3(x1, y1, 4.0f);
-            GL.Color3(1.0f, 0.0f, 0.0f); GL.Vertex3(x2, y2, 4.0f);
-            GL.Color3(0.2f, 0.9f, 1.0f); GL.Vertex3(x3, y3, 4.0f);
-
-            GL.End();
-
-            GL.PopMatrix();
+            DrawTank(this.tank1, e);
+            DrawTank(this.tank2, e);
 
             SwapBuffers();
+        }
+        public void DrawTank(Tank tank, FrameEventArgs e)
+        {
+            GL.PushMatrix();
+            GL.Rotate(tank.angleTank, tank.x, tank.y, 4.0f);
+            GL.Begin(BeginMode.Quads);
+            GL.Color3(1.0f, 1.0f, 0.0f);
+            GL.Vertex3(tank.x-0.1f, tank.y- 0.05f, 4.0f);
+            GL.Vertex3(tank.x+0.1f, tank.y- 0.05f, 4.0f);
+            GL.Vertex3(tank.x+0.1f, tank.y+ 0.05f, 4.0f);
+            GL.Vertex3(tank.x-0.1f, tank.y+ 0.05f, 4.0f);
+
+            GL.End();
+            
+
+
+            GL.Begin(BeginMode.Triangles);
+            GL.Color3(1.0f, 1.0f, 0.0f);
+            GL.Vertex3(tank.x - 0.05f, tank.y + 0.05f, 4.0f);
+            GL.Vertex3(tank.x , tank.y + 0.15f, 4.0f);
+            GL.Vertex3(tank.x + 0.05f, tank.y + 0.05f, 4.0f);
+
+            GL.End();
+            
+                GL.Begin(BeginMode.Lines);
+                GL.Color3(1.0f, 1.0f, 0.0f);
+                GL.Vertex3(tank.x + 0.05f / 2.0f, tank.y + 0.1f, 4.0f);
+                GL.Vertex3(tank.x + 0.05f / 2.0f + 0.1f * Math.Cos(tank.angleDula * Math.PI / 180.0f), tank.y + 0.1f + 0.1f * Math.Sin(tank.angleDula * Math.PI / 180.0f), 4.0f);
+
+                GL.End();
+            GL.PopMatrix();
         }
 
         [STAThread]

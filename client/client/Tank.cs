@@ -34,6 +34,8 @@ namespace client
             angleTank = angleTankInput;
         }
 
+        
+
         public float hp
         {
             get
