@@ -9,9 +9,18 @@ namespace client
 {
     class Game : GameWindow
     {
+        float x1, x2, x3, y1, y2, y3;
+
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
         {
+            x1 = -1.0f;
+            y1 = -1.0f;
+            x2 = 1.0f;
+            y2 = -1.0f;
+            x3 = 0.0f;
+            y3 = 1.0f;
+            
             VSync = VSyncMode.On;
         }
 
@@ -40,6 +49,21 @@ namespace client
 
             if (Keyboard[Key.Escape])
                 Exit();
+            else if (Keyboard[Key.Right])
+            {
+                x1 = x1 + 0.1f;
+                x2 = x2 + 0.1f;
+                x3 = x3 + 0.1f;
+            }
+            else if (Keyboard[Key.Left])
+            {
+                x1 = x1 - 0.1f;
+                x2 = x2 - 0.1f;
+                x3 = x3 - 0.1f;
+            }
+
+
+
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -54,9 +78,9 @@ namespace client
 
             GL.Begin(BeginMode.Triangles);
 
-            GL.Color3(1.0f, 1.0f, 0.0f); GL.Vertex3(-1.0f, -1.0f, 4.0f);
-            GL.Color3(1.0f, 0.0f, 0.0f); GL.Vertex3(1.0f, -1.0f, 4.0f);
-            GL.Color3(0.2f, 0.9f, 1.0f); GL.Vertex3(0.0f, 1.0f, 4.0f);
+            GL.Color3(1.0f, 1.0f, 0.0f); GL.Vertex3(x1, y1, 4.0f);
+            GL.Color3(1.0f, 0.0f, 0.0f); GL.Vertex3(x2, y2, 4.0f);
+            GL.Color3(0.2f, 0.9f, 1.0f); GL.Vertex3(x3, y3, 4.0f);
 
             GL.End();
 
