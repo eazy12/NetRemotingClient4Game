@@ -207,7 +207,7 @@ namespace client
             GL.PushMatrix();
             GL.BindTexture(TextureTarget.Texture2D, greenTankWeapon);
             GL.Rotate(tank.angleDula, 0, 0, 4.0f);
-            GL.Begin(BeginMode.Quads);
+            GL.Begin(BeginMode.Quads); 
 
             GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.5f, 0.0f);
             GL.TexCoord2(0f, 0f); GL.Vertex2(0.1f, 0.0f);
@@ -216,17 +216,18 @@ namespace client
             GL.End();
             GL.PopMatrix();
             GL.PopMatrix();
+            
 
-            //GL.PushMatrix();
-            //        GL.Begin(BeginMode.Quads);
-            //        GL.Color3(1.0f, 1.0f, 0.0f);
-            //        GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
-            //        GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
-            //        GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
-            //        GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
-            //        GL.End();
-            //GL.PopMatrix();
-            //GL.PopMatrix();
+            GL.PushMatrix();
+            GL.Begin(BeginMode.Quads);
+            GL.Color3(1.0f, 1.0f, 0.0f);
+            GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
+            GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
+            GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
+            GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
+            GL.End();
+            GL.PopMatrix();
+            GL.PopMatrix();
         }
 
         private void fireBullet(Tank tank)
@@ -235,7 +236,7 @@ namespace client
             int angle = tank.angleDula + tank.angleTank;
             timeInitial = DateTime.Now;
 
-            aTimer = new Timer(30);
+            aTimer = new Timer(3000);
             aTimer.Elapsed += delegate { drawBullet(tank, angle, tank.x, tank.y); };
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
@@ -265,8 +266,8 @@ T1 = t0 = 0, T2 = T = 2 * Vy0 / g;
         private void drawBullet(Tank tank, int angle, float X0, float Y0)
         {
             TimeSpan currentTime = DateTime.Now - timeInitial;
-            int V0 = 3 * 1000;
-            int t = currentTime.Seconds * 1000 + currentTime.Milliseconds;
+            double V0 = 3;
+            double t = currentTime.Seconds + currentTime.Milliseconds / 1000;
             double g = 9.8;
 
             double Vx0 = V0 * Math.Cos(angle);
@@ -275,7 +276,12 @@ T1 = t0 = 0, T2 = T = 2 * Vy0 / g;
             double Xt = X0 + Vx0 * t;
             double Yt = Y0 + Vy0 * t - g * t * t / 2;
 
-            Console.WriteLine(Xt + " ... " + Yt);
+            Console.WriteLine("Math.Cos(angle): " + Math.Cos(angle));
+            Console.WriteLine("angle: " + angle);
+            Console.WriteLine("t: " + t);
+            Console.WriteLine("Vx0: " + Vx0 + "; Vy0: " + Vy0);
+            Console.WriteLine("Xt: " + Xt + "; Yt: " + Yt);
+            Console.WriteLine("-------------------------");
 
             bulletXt = Xt;
             bulletYt = Yt;
