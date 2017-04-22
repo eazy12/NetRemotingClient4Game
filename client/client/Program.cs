@@ -10,8 +10,10 @@ namespace client
     class Game : GameWindow
     {
         Tank tank1, tank2;
-        private int current_texture;
-        private int texture;
+        private int greenTank;
+        private int blueTank;
+        private int greenTankWeapon;
+        private int blueTankWeapon;
 
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
@@ -31,8 +33,10 @@ namespace client
 
             GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-            current_texture = LoadTexture("C:\\tank.png", 1);
-
+            greenTank = LoadTexture("tank.png", 1);
+            blueTank = LoadTexture("tank1.png", 1);
+            greenTankWeapon = LoadTexture("weapon.png", 1);
+            blueTankWeapon = LoadTexture("weapon1.png", 1);
             GL.Enable(EnableCap.Texture2D);
             //Basically enables the alpha channel to be used in the color buffer
             GL.Enable(EnableCap.Blend);
@@ -149,7 +153,7 @@ namespace client
                 tank1.angleDula = -15;
                 tank2.angleDula = -15;
             }
-            DrawTank(this.tank1, e);
+            
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -161,9 +165,7 @@ namespace client
             Matrix4 modelview = Matrix4.LookAt(Vector3.Zero, Vector3.UnitZ, Vector3.UnitY);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref modelview);
-
-            
-
+            DrawTank(this.tank1, e);
             SwapBuffers();
         }
         public void DrawTank(Tank tank, FrameEventArgs e)
@@ -173,69 +175,44 @@ namespace client
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
             GL.PushMatrix();
-            GL.Translate(0, 0, -5);
-            GL.Rotate(tank.angleTank, tank.x, tank.y, 4.0f);
-         
-            GL.Color4(Color.White);
+                GL.Translate(0, 0, -5);
+                GL.Rotate(tank.angleTank, tank.x, tank.y, 4.0f);
+                GL.Color4(Color.White);
 
-            GL.BindTexture(TextureTarget.Texture2D, current_texture);
+                
 
+            GL.BindTexture(TextureTarget.Texture2D, greenTankWeapon);
             GL.Begin(BeginMode.Quads);
 
-            //Bind texture coordinates to vertices in ccw order
-
-            //Top-Right
-            GL.TexCoord2(1.0f, 0.0f);
-            GL.Vertex2(tank.x + 0.2f, tank.y + 0.2f);
-
-
-            //Top-Left
-            GL.TexCoord2(0f, 0f);
-            GL.Vertex2(tank.x - 0.2f, tank.y + 0.2f);
-
-            //Bottom-Left
-            GL.TexCoord2(0f, 1f);
-            GL.Vertex2(tank.x - 0.2f, tank.y - 0.2f);
-
-            //Bottom-Right
-            GL.TexCoord2(1f, 1f);
-            GL.Vertex2(tank.x + 0.2f, tank.y - 0.2f);
-
+            GL.TexCoord2(1.0f, 0.0f); GL.Vertex2( ( tank.x + 0.3) * Math.Cos(tank.angleDula * Math.PI / 180.0f),
+                                                                        (tank.y + 0.1f) *  (1+Math.Sin(tank.angleDula * Math.PI / 180.0f))) ;  
+            GL.TexCoord2(0f, 0f); GL.Vertex2( tank.x + 0.08f , tank.y + 0.1f ); // koren
+            GL.TexCoord2(0f, 1f); GL.Vertex2( tank.x + 0.08f, tank.y + 0.15f  );// koren
+            GL.TexCoord2(1f, 1f); GL.Vertex2( (tank.x + 0.3) * Math.Cos(tank.angleDula * Math.PI / 180.0f),
+                                                                        (tank.y + 0.1f) * (1+ Math.Sin(tank.angleDula * Math.PI / 180.0f))) ;
             GL.End();
 
+           // GL.Vertex3(tank.x + 0.05f / 2.0f + 0.1f * Math.Cos(tank.angleDula * Math.PI / 180.0f),
+           //    tank.y + 0.1f + 0.1f * Math.Sin(tank.angleDula * Math.PI / 180.0f), 4.0f);
+
             GL.BindTexture(TextureTarget.Texture2D, 0);
+            
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+
+            
+
+            GL.PushMatrix();
+            GL.BindTexture(TextureTarget.Texture2D, greenTank);
+            GL.Begin(BeginMode.Quads);
+            GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(tank.x + 0.25f, tank.y + 0.25f);
+            GL.TexCoord2(0f, 0f); GL.Vertex2(tank.x - 0.25f, tank.y + 0.25f);
+            GL.TexCoord2(0f, 1f); GL.Vertex2(tank.x - 0.25f, tank.y - 0.25f);
+            GL.TexCoord2(1f, 1f); GL.Vertex2(tank.x + 0.25f, tank.y - 0.25f);
+            GL.End();
+
 
             GL.PopMatrix();
-
-            SwapBuffers();
-            //GL.PushMatrix();
-            //GL.Rotate(tank.angleTank, tank.x, tank.y, 4.0f);
-            //GL.Begin(BeginMode.Quads);
-            //GL.Color3(1.0f, 1.0f, 0.0f);
-            //GL.Vertex3(tank.x-0.1f, tank.y- 0.05f, 4.0f);
-            //GL.Vertex3(tank.x+0.1f, tank.y- 0.05f, 4.0f);
-            //GL.Vertex3(tank.x+0.1f, tank.y+ 0.05f, 4.0f);
-            //GL.Vertex3(tank.x-0.1f, tank.y+ 0.05f, 4.0f);
-
-            //GL.End();
-
-
-
-            //GL.Begin(BeginMode.Triangles);
-            //GL.Color3(1.0f, 1.0f, 0.0f);
-            //GL.Vertex3(tank.x - 0.05f, tank.y + 0.05f, 4.0f);
-            //GL.Vertex3(tank.x , tank.y + 0.15f, 4.0f);
-            //GL.Vertex3(tank.x + 0.05f, tank.y + 0.05f, 4.0f);
-
-            //GL.End();
-
-            //    GL.Begin(BeginMode.Lines);
-            //    GL.Color3(1.0f, 1.0f, 0.0f);
-            //    GL.Vertex3(tank.x + 0.05f / 2.0f, tank.y + 0.1f, 4.0f);
-            //    GL.Vertex3(tank.x + 0.05f / 2.0f + 0.1f * Math.Cos(tank.angleDula * Math.PI / 180.0f), tank.y + 0.1f + 0.1f * Math.Sin(tank.angleDula * Math.PI / 180.0f), 4.0f);
-
-            //    GL.End();
-            //GL.PopMatrix();
+            GL.PopMatrix();
         }
 
         [STAThread]
