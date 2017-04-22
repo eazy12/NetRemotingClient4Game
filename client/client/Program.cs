@@ -191,59 +191,42 @@ namespace client
         }
         public void DrawTank(Tank tank, FrameEventArgs e)
         {
-
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
-
             
             GL.PushMatrix();
-                GL.Translate(0, 0, -5);
-                GL.Rotate(tank.angleTank, tank.x, tank.y, 4.0f);
-                GL.Color4(Color.White);
-
-                
-
-            GL.BindTexture(TextureTarget.Texture2D, greenTankWeapon);
-            GL.Begin(BeginMode.Quads);
-
-            GL.TexCoord2(1.0f, 0.0f); GL.Vertex2( ( tank.x + 0.3) * Math.Cos(tank.angleDula * Math.PI / 180.0f),
-                                                                        (tank.y + 0.1f) *  (1+Math.Sin(tank.angleDula * Math.PI / 180.0f))) ;  
-            GL.TexCoord2(0f, 0f); GL.Vertex2( tank.x + 0.08f , tank.y + 0.1f ); // koren
-            GL.TexCoord2(0f, 1f); GL.Vertex2( tank.x + 0.08f, tank.y + 0.15f  );// koren
-            GL.TexCoord2(1f, 1f); GL.Vertex2( (tank.x + 0.3) * Math.Cos(tank.angleDula * Math.PI / 180.0f),
-                                                                        (tank.y + 0.1f) * (1+ Math.Sin(tank.angleDula * Math.PI / 180.0f))) ;
-            GL.End();
-
-           // GL.Vertex3(tank.x + 0.05f / 2.0f + 0.1f * Math.Cos(tank.angleDula * Math.PI / 180.0f),
-           //    tank.y + 0.1f + 0.1f * Math.Sin(tank.angleDula * Math.PI / 180.0f), 4.0f);
-
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-
-
-
-            GL.PushMatrix();
+            GL.Translate(tank.x, tank.y, -5);
+            GL.Rotate(tank.angleTank, 0,0, 4.0f);
             GL.BindTexture(TextureTarget.Texture2D, greenTank);
-            GL.Begin(BeginMode.Quads);
-            GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(tank.x + 0.25f, tank.y + 0.25f);
-            GL.TexCoord2(0f, 0f); GL.Vertex2(tank.x - 0.25f, tank.y + 0.25f);
-            GL.TexCoord2(0f, 1f); GL.Vertex2(tank.x - 0.25f, tank.y - 0.25f);
-            GL.TexCoord2(1f, 1f); GL.Vertex2(tank.x + 0.25f, tank.y - 0.25f);
-            GL.End();
-            
-
-            GL.PopMatrix();
+                GL.Begin(BeginMode.Quads);
+                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.25f, 0.25f);
+                GL.TexCoord2(0f, 0f); GL.Vertex2(-0.25f, 0.25f);
+                GL.TexCoord2(0f, 1f); GL.Vertex2(-0.25f, -0.25f);
+                GL.TexCoord2(1f, 1f); GL.Vertex2(0.25f, -0.25f);
+                GL.End();
 
             GL.PushMatrix();
+            GL.BindTexture(TextureTarget.Texture2D, greenTankWeapon);
+            GL.Rotate(tank.angleDula, 0, 0, 4.0f);
             GL.Begin(BeginMode.Quads);
-            GL.Color3(1.0f, 1.0f, 0.0f);
-            GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
-            GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
-            GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
-            GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
+
+            GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.5f, 0.0f);
+            GL.TexCoord2(0f, 0f); GL.Vertex2(0.1f, 0.0f);
+            GL.TexCoord2(0f, 1f); GL.Vertex2(0.1f, 0.05f);
+            GL.TexCoord2(1f, 1f); GL.Vertex2(0.5f, 0.05f);
             GL.End();
             GL.PopMatrix();
+            GL.PopMatrix();
+
+            //GL.PushMatrix();
+            //        GL.Begin(BeginMode.Quads);
+            //        GL.Color3(1.0f, 1.0f, 0.0f);
+            //        GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
+            //        GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
+            //        GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
+            //        GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
+            //        GL.End();
+            //GL.PopMatrix();
+            //GL.PopMatrix();
         }
 
         private void fireBullet(Tank tank)

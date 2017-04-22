@@ -22,7 +22,7 @@ namespace client
         private float _hp = 100;
         private float _x;
         private float _y;
-        private int _angleDula = 90;
+        private int _angleDula = 0;
         private int _angleTank = 0;
         private float _weaponCD = 2;
         private float _maxAngle = 70;
