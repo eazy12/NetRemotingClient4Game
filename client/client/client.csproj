@@ -60,6 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="tank.png" />
+    <Content Include="tank1.png" />
+    <Content Include="weapon.png" />
+    <Content Include="weapon1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
