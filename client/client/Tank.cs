@@ -11,8 +11,8 @@ namespace client
         float hp { get; set; }
         float x { get; set; }
         float y { get; set; }
-        float angleDula { get; set; }
-        float angleTank { get; set; }
+        int angleDula { get; set; }
+        int angleTank { get; set; }
         float weaponCD { get; set; }
         float maxAngle { get; set; }
     }
@@ -22,12 +22,12 @@ namespace client
         private float _hp = 100;
         private float _x;
         private float _y;
-        private float _angleDula = 90;
-        private float _angleTank;
+        private int _angleDula = 90;
+        private int _angleTank = 0;
         private float _weaponCD = 2;
         private float _maxAngle = 70;
 
-        public Tank(float xInput, float yInput, float angleTankInput)
+        public Tank(float xInput, float yInput, int angleTankInput)
         {
             x = xInput;
             y = yInput;
@@ -76,7 +76,7 @@ namespace client
             }
         }
 
-        public float angleDula
+        public int angleDula
         {
             get
             {
@@ -89,7 +89,7 @@ namespace client
             }
         }
 
-        public float angleTank
+        public int angleTank
         {
             get
             {

@@ -4,6 +4,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using System.Timers;
 
 namespace client
 {
@@ -14,6 +15,11 @@ namespace client
         private int blueTank;
         private int greenTankWeapon;
         private int blueTankWeapon;
+        private Timer aTimer;
+        private int nEventsFired = 0;
+        private DateTime timeInitial;
+        private double bulletXt;
+        private double bulletYt;
 
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
@@ -21,6 +27,17 @@ namespace client
             tank1 = new Tank(0, 0, 0);
             tank2 = new Tank(0.3f, 0, 0);
             VSync = VSyncMode.On;
+        }
+
+        public static Func<TResult> Apply<TResult, TArg>(Func<TArg, TResult> func, TArg arg)
+        {
+            return () => func(arg);
+        }
+
+        public static Func<TResult> Apply<TResult, TArg1, TArg2>(Func<TArg1, TArg2, TResult> func,
+                                                                  TArg1 arg1, TArg2 arg2)
+        {
+            return () => func(arg1, arg2);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -31,12 +48,12 @@ namespace client
 
            
 
-            GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            //GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-            greenTank = LoadTexture("tank.png", 1);
-            blueTank = LoadTexture("tank1.png", 1);
-            greenTankWeapon = LoadTexture("weapon.png", 1);
-            blueTankWeapon = LoadTexture("weapon1.png", 1);
+            greenTank = LoadTexture("./tank.png", 1);
+            blueTank = LoadTexture("./tank1.png", 1);
+            greenTankWeapon = LoadTexture("./weapon.png", 1);
+            blueTankWeapon = LoadTexture("./weapon1.png", 1);
             GL.Enable(EnableCap.Texture2D);
             //Basically enables the alpha channel to be used in the color buffer
             GL.Enable(EnableCap.Blend);
@@ -142,6 +159,10 @@ namespace client
                 tank1.angleTank -= 10;
                 tank2.angleTank -= 10;
             }
+            else if (Keyboard[Key.Space])
+            {
+                fireBullet(tank1);
+            }
 
             if (tank1.angleDula > 65)
             {
@@ -174,6 +195,8 @@ namespace client
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
+
+            
             GL.PushMatrix();
                 GL.Translate(0, 0, -5);
                 GL.Rotate(tank.angleTank, tank.x, tank.y, 4.0f);
@@ -196,10 +219,9 @@ namespace client
            //    tank.y + 0.1f + 0.1f * Math.Sin(tank.angleDula * Math.PI / 180.0f), 4.0f);
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
-            
-                GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
 
-            
+
 
             GL.PushMatrix();
             GL.BindTexture(TextureTarget.Texture2D, greenTank);
@@ -209,10 +231,71 @@ namespace client
             GL.TexCoord2(0f, 1f); GL.Vertex2(tank.x - 0.25f, tank.y - 0.25f);
             GL.TexCoord2(1f, 1f); GL.Vertex2(tank.x + 0.25f, tank.y - 0.25f);
             GL.End();
-
+            
 
             GL.PopMatrix();
+
+            GL.PushMatrix();
+            GL.Begin(BeginMode.Quads);
+            GL.Color3(1.0f, 1.0f, 0.0f);
+            GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
+            GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
+            GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
+            GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
+            GL.End();
             GL.PopMatrix();
+        }
+
+        private void fireBullet(Tank tank)
+        {
+
+            int angle = tank.angleDula + tank.angleTank;
+            timeInitial = DateTime.Now;
+
+            aTimer = new Timer(30);
+            aTimer.Elapsed += delegate { drawBullet(tank, angle, tank.x, tank.y); };
+            aTimer.AutoReset = true;
+            aTimer.Enabled = true;
+
+            /*
+Итак, у нас нет сопротивления воздуха, снаряд представляет собой материальную точку, не вращается, вращением земли и всякие там кориолисовы силы не учитываем, равно как и полеты птиц и башни ПБЗ.
+Начальные проекции скорости:
+Vx0 = V0 * cos(alpha);
+Vy0 = V0 * sin(alpha);
+Координаты снаряда в произвольный момент времени на интервале t0 < t < T (T - момент падения на землю):
+X(t) = X0 + Vx0 * (t - t0);
+Y(t) = Y0 + Vy0 * (t - t0) - g * (t - t0)^2 / 2;
+Если примем t0 = 0, то
+X(t) = X0 + Vx0 * t;
+Y(t) = Y0 + Vy0 * t - g * t * t / 2;
+Время падения на землю:
+Y(T) = 0 = Y0 + Vy0 * T - g * T * T / 2;
+Примем, что Y0 = 0
+Vy0 * T - g * T * T / 2 = 0;
+=> T * (Vy0 - g * T / 2) = 0;
+T1 = t0 = 0, T2 = T = 2 * Vy0 / g;
+Этого вам хватит за глаза.
+             */
+        }
+       
+
+        private void drawBullet(Tank tank, int angle, float X0, float Y0)
+        {
+            TimeSpan currentTime = DateTime.Now - timeInitial;
+            int V0 = 3 * 1000;
+            int t = currentTime.Seconds * 1000 + currentTime.Milliseconds;
+            double g = 9.8;
+
+            double Vx0 = V0 * Math.Cos(angle);
+            double Vy0 = V0 * Math.Sin(angle);
+
+            double Xt = X0 + Vx0 * t;
+            double Yt = Y0 + Vy0 * t - g * t * t / 2;
+
+            Console.WriteLine(Xt + " ... " + Yt);
+
+            bulletXt = Xt;
+            bulletYt = Yt;
         }
 
         [STAThread]
