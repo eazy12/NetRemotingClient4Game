@@ -5,6 +5,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.Timers;
+using System.Collections;
 
 namespace client
 {
@@ -20,6 +21,7 @@ namespace client
         private DateTime timeInitial;
         private double bulletXt;
         private double bulletYt;
+        private ArrayList points = new ArrayList();
 
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
@@ -62,6 +64,7 @@ namespace client
             //Use for pixel depth comparing before storing in the depth buffer
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.DepthTest);
+
         }
 
         private int LoadTexture(string path, int quality = 0, bool repeat = true, bool flip_y = false)
@@ -184,15 +187,16 @@ namespace client
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             Matrix4 modelview = Matrix4.LookAt(Vector3.Zero, Vector3.UnitZ, Vector3.UnitY);
-            GL.MatrixMode(MatrixMode.Modelview);
+            GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref modelview);
-            DrawTank(this.tank1, e);
+            drawTerrain(ClientRectangle.Width / 100, ClientRectangle.Height / 80, ClientRectangle.Height / 20, 0.9);
+            drawTank(tank1, e);
             SwapBuffers();
         }
-        public void DrawTank(Tank tank, FrameEventArgs e)
+        public void drawTank(Tank tank, FrameEventArgs e)
         {
+            /*
             GL.LoadIdentity();
-            
             GL.PushMatrix();
             GL.Translate(tank.x, tank.y, -5);
             GL.Rotate(tank.angleTank, 0,0, 4.0f);
@@ -215,18 +219,20 @@ namespace client
             GL.TexCoord3(0f, 1f, 0.0f); GL.Vertex3(0.0f, 0.05f, 0.01f);
             GL.TexCoord3(1f, 1f, 0.0f); GL.Vertex3(0.4f, 0.05f, 0.01f);
             GL.End();
-            GL.PopMatrix();
+            GL.PopMatrix(); */
 
-            //GL.PushMatrix();
-            //GL.Begin(BeginMode.Quads);
-            //GL.Color3(1.0f, 1.0f, 0.0f);
-            //GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
-            //GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
-            //GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
-            //GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
-            //GL.End();
-            //GL.PopMatrix();
-            //GL.PopMatrix();
+            /*
+            GL.PushMatrix();
+            GL.Begin(BeginMode.Quads);
+            GL.Color3(1.0f, 1.0f, 0.0f);
+            GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
+            GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
+            GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
+            GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
+            GL.End();
+            GL.PopMatrix();
+            GL.PopMatrix();
+            */
         }
 
         private void fireBullet(Tank tank)
@@ -239,34 +245,65 @@ namespace client
             aTimer.Elapsed += delegate { drawBullet(tank, angle, tank.x, tank.y); };
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
-
-            /*
-Итак, у нас нет сопротивления воздуха, снаряд представляет собой материальную точку, не вращается, вращением земли и всякие там кориолисовы силы не учитываем, равно как и полеты птиц и башни ПБЗ.
-Начальные проекции скорости:
-Vx0 = V0 * cos(alpha);
-Vy0 = V0 * sin(alpha);
-Координаты снаряда в произвольный момент времени на интервале t0 < t < T (T - момент падения на землю):
-X(t) = X0 + Vx0 * (t - t0);
-Y(t) = Y0 + Vy0 * (t - t0) - g * (t - t0)^2 / 2;
-Если примем t0 = 0, то
-X(t) = X0 + Vx0 * t;
-Y(t) = Y0 + Vy0 * t - g * t * t / 2;
-Время падения на землю:
-Y(T) = 0 = Y0 + Vy0 * T - g * T * T / 2;
-Примем, что Y0 = 0
-Vy0 * T - g * T * T / 2 = 0;
-=> T * (Vy0 - g * T / 2) = 0;
-T1 = t0 = 0, T2 = T = 2 * Vy0 / g;
-Этого вам хватит за глаза.
-             */
         }
        
+        private void drawTerrain(double width, double height, double displace, double roughness)
+        {
+            if (points.Count == 0)
+            {
+                // Gives us a power of 2 based on our width
+                int power = (int)Math.Pow(2, Math.Ceiling(Math.Log(width) / (Math.Log(2))));
+                Random rnd = new Random();
+                double rndValue1 = rnd.Next(0, 100);
+                double rndValue2 = rnd.Next(0, 100);
+
+                // Set the initial left point
+                points.Add(height / 2 + (rndValue1 / 100 * displace * 2) - displace);
+                // set the initial right point
+                for (int k = 1; k < power; k++)
+                {
+                    points.Add(0);
+                }
+                points.Add(height / 2 + (rndValue2 / 100 * displace * 2) - displace);
+
+                displace *= roughness;
+
+                for (int i = 1; i < power; i *= 2)
+                {
+                    // Iterate through each segment calculating the center point
+                    for (int j = (power / i) / 2; j < power; j += power / i)
+                    {
+                        double rndValueLocal = rnd.Next(0, 100);
+                        double res = ((Convert.ToDouble(points[j - (power / i) / 2]) + Convert.ToDouble(points[j + (power / i) / 2])) / 2);
+                        res += (rndValueLocal / 100 * displace * 2) - displace;
+                        points.Insert(j, res);
+                    }
+                    // reduce our random range
+                    displace *= roughness;
+                }
+            }
+
+            GL.PushMatrix();
+            GL.Color3(1.0f, 1.0f, 0.0f);
+            GL.LineWidth(2);
+            GL.Begin(BeginMode.LineStrip);
+            for (double i = 0; i < points.Count; i++)
+            {
+                double pointValue = Convert.ToDouble(points[(int)i]);
+                double x = i / 10;
+                double y = pointValue / 1000;
+                GL.Vertex2(x, y);
+                //Console.WriteLine(x + " " + y);
+            }
+            GL.End();
+            GL.PopMatrix();
+        }
 
         private void drawBullet(Tank tank, int angle, float X0, float Y0)
         {
             TimeSpan currentTime = DateTime.Now - timeInitial;
-            int V0 = 3 * 1000;
-            int t = currentTime.Seconds * 1000 + currentTime.Milliseconds;
+            int V0 = 3;
+            int t = 10; //currentTime.Seconds * 1000 + currentTime.Milliseconds;
             double g = 9.8;
 
             double Vx0 = V0 * Math.Cos(angle);
@@ -275,7 +312,12 @@ T1 = t0 = 0, T2 = T = 2 * Vy0 / g;
             double Xt = X0 + Vx0 * t;
             double Yt = Y0 + Vy0 * t - g * t * t / 2;
 
-            Console.WriteLine(Xt + " ... " + Yt);
+            Console.WriteLine("Math.Cos(angle): " + Math.Cos(angle));
+            Console.WriteLine("angle: " + angle);
+            Console.WriteLine("t: " + t);
+            Console.WriteLine("Vx0: " + Vx0 + "; Vy0: " + Vy0);
+            Console.WriteLine("Xt: " + Xt + "; Yt: " + Yt);
+            Console.WriteLine("-------------------------");
 
             bulletXt = Xt;
             bulletYt = Yt;
