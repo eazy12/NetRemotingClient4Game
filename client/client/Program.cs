@@ -196,35 +196,35 @@ namespace client
             GL.PushMatrix();
             GL.Translate(tank.x, tank.y, -5);
             GL.Rotate(tank.angleTank, 0,0, 4.0f);
-            GL.BindTexture(TextureTarget.Texture2D, greenTank);
+                GL.BindTexture(TextureTarget.Texture2D, greenTank);
                 GL.Begin(BeginMode.Quads);
-                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.25f, 0.25f);
-                GL.TexCoord2(0f, 0f); GL.Vertex2(-0.25f, 0.25f);
-                GL.TexCoord2(0f, 1f); GL.Vertex2(-0.25f, -0.25f);
-                GL.TexCoord2(1f, 1f); GL.Vertex2(0.25f, -0.25f);
+                    GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.25f, 0.25f);
+                    GL.TexCoord2(0f, 0f); GL.Vertex2(-0.25f, 0.25f);
+                    GL.TexCoord2(0f, 1f); GL.Vertex2(-0.25f, -0.25f);
+                    GL.TexCoord2(1f, 1f); GL.Vertex2(0.25f, -0.25f);
                 GL.End();
 
-            GL.PushMatrix();
+            
             GL.BindTexture(TextureTarget.Texture2D, greenTankWeapon);
+            GL.Translate(0.05, 0.1, 0);
             GL.Rotate(tank.angleDula, 0, 0, 4.0f);
             GL.Begin(BeginMode.Quads);
 
-            GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.5f, 0.0f);
-            GL.TexCoord2(0f, 0f); GL.Vertex2(0.1f, 0.0f);
-            GL.TexCoord2(0f, 1f); GL.Vertex2(0.1f, 0.05f);
-            GL.TexCoord2(1f, 1f); GL.Vertex2(0.5f, 0.05f);
+            GL.TexCoord3(1.0f, 0.0f, 0.0f); GL.Vertex3(0.4f, 0.0f, 0.01f);
+            GL.TexCoord3(0f, 0f, 0.0f); GL.Vertex3(0.0f, 0.0f, 0.01f);
+            GL.TexCoord3(0f, 1f, 0.0f); GL.Vertex3(0.0f, 0.05f, 0.01f);
+            GL.TexCoord3(1f, 1f, 0.0f); GL.Vertex3(0.4f, 0.05f, 0.01f);
             GL.End();
-            GL.PopMatrix();
             GL.PopMatrix();
 
             //GL.PushMatrix();
-            //        GL.Begin(BeginMode.Quads);
-            //        GL.Color3(1.0f, 1.0f, 0.0f);
-            //        GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
-            //        GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
-            //        GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
-            //        GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
-            //        GL.End();
+            //GL.Begin(BeginMode.Quads);
+            //GL.Color3(1.0f, 1.0f, 0.0f);
+            //GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
+            //GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
+            //GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
+            //GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
+            //GL.End();
             //GL.PopMatrix();
             //GL.PopMatrix();
         }
