@@ -176,7 +176,8 @@ namespace client
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref modelview);
             drawTerrain(ClientRectangle.Width / 100, ClientRectangle.Height / 50, ClientRectangle.Height / 7, 0.95);
-            drawTank(tank1, e);
+            drawTank(tank1, 1, e);
+            drawTank(tank2, 2, e);
             SwapBuffers();
         }
         public void drawTank(Tank tank, int number, FrameEventArgs e)
