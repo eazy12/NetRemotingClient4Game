@@ -79,7 +79,7 @@ namespace client
             {
                 // пытался исправить проваливание гусениц через землю. Но, видимо, дело в том, что танк
                 // поварачиваясь при подъеме в гору деформируется из-за того, что соотношение x:y окна не равно 1
-                return _y + tankHeight; // / Math.Cos( _angleTank * 180.0 / Math.PI );
+                return _y + tankHeight / Math.Cos( angleTank *  Math.PI / 180.0d);
             }
 
             set
