@@ -17,7 +17,6 @@ namespace client
         private int greenTankWeapon;
         private int blueTankWeapon;
         private Timer aTimer;
-        private int nEventsFired = 0;
         private DateTime timeInitial;
         private double bulletXt;
         private double bulletYt;
@@ -29,17 +28,6 @@ namespace client
             tank1 = new Tank(0, 0, 0);
             tank2 = new Tank(0.3f, 0, 0);
             VSync = VSyncMode.On;
-        }
-
-        public static Func<TResult> Apply<TResult, TArg>(Func<TArg, TResult> func, TArg arg)
-        {
-            return () => func(arg);
-        }
-
-        public static Func<TResult> Apply<TResult, TArg1, TArg2>(Func<TArg1, TArg2, TResult> func,
-                                                                  TArg1 arg1, TArg2 arg2)
-        {
-            return () => func(arg1, arg2);
         }
 
         protected override void OnLoad(EventArgs e)
