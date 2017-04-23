@@ -23,6 +23,7 @@ namespace client
         private double bulletXt;
         private double bulletYt;
         private ArrayList terrainPoints = new ArrayList();
+        private bool initTank = false;
 
         private const double TANK_WIDTH = 0.25 / 4;
         private const double TANK_HEIGHT = 0.25 / 4;
@@ -34,7 +35,7 @@ namespace client
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
         {
-            tank1 = new Tank(TANK_WIDTH, TANK_HEIGHT, TANK_SPEED, 1, 0, 0);
+            tank1 = new Tank(TANK_WIDTH, TANK_HEIGHT, TANK_SPEED, -1 + TANK_WIDTH, 0, 0);
             tank2 = new Tank(TANK_WIDTH, TANK_HEIGHT, TANK_SPEED, 0.3, 0, 0);
             VSync = VSyncMode.On;
         }
@@ -45,7 +46,7 @@ namespace client
 
             GL.ClearColor(0.1f, 0.2f, 0.5f, 0.0f);
 
-           
+
 
             //GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -70,9 +71,9 @@ namespace client
 
             if (flip_y)
                 bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            
+
             int texture = GL.GenTexture();
-            
+
             GL.BindTexture(TextureTarget.Texture2D, texture);
             switch (quality)
             {
@@ -121,6 +122,30 @@ namespace client
             GL.LoadMatrix(ref projection);
         }
 
+        private void moveTankRight(Tank tank)
+        {
+            if (tank.x + TANK_SPEED + TANK_WIDTH > RIGHT_EXTREME_COORD)
+            {
+                tank.x = RIGHT_EXTREME_COORD - TANK_WIDTH;
+            }
+
+            tank.x += TANK_SPEED;
+            tank.y = getHeightByX(tank.x);
+            tank.terrainHeight = getHeightByX(tank.x);
+        }
+
+        private void moveTankLeft(Tank tank)
+        {
+            if (tank.x - TANK_SPEED - TANK_WIDTH < LEFT_EXTREME_COORD)
+            {
+                tank.x = LEFT_EXTREME_COORD + TANK_WIDTH;
+            }
+
+            tank.x -= TANK_SPEED;
+            tank.y = getHeightByX(tank.x);
+            tank.terrainHeight = getHeightByX(tank.x);
+        }
+
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
@@ -129,29 +154,11 @@ namespace client
                 Exit();
             else if (Keyboard[Key.Right])
             {
-                if (tank1.x + TANK_SPEED + TANK_WIDTH > RIGHT_EXTREME_COORD)
-                {
-                    tank1.x = RIGHT_EXTREME_COORD - TANK_WIDTH;
-                }
-                
-                tank1.x += TANK_SPEED;
-                tank1.y = getHeightByX(tank1.x);
-                tank1.terrainHeight = getHeightByX(tank1.x);
-
-                tank2.x += TANK_SPEED;
+                moveTankRight(tank1);
             }
             else if (Keyboard[Key.Left])
             {
-                if (tank1.x - TANK_SPEED - TANK_WIDTH < LEFT_EXTREME_COORD)
-                {
-                    tank1.x = LEFT_EXTREME_COORD + TANK_WIDTH;
-                }
-
-                tank1.x -= TANK_SPEED;
-                tank1.y = getHeightByX(tank1.x);
-                tank1.terrainHeight = getHeightByX(tank1.x);
-
-                tank2.x -= TANK_SPEED;
+                moveTankLeft(tank1);
             }
             else if (Keyboard[Key.Up])
             {
@@ -204,13 +211,17 @@ namespace client
             drawTank(tank1, 1, e);
             //drawTank(tank2, 2, e);
             SwapBuffers();
+
+            if (initTank == false)
+            {
+                initTank = true;
+                moveTankRight(tank1);
+            }
         }
         public void drawTank(Tank tank, int number, FrameEventArgs e)
         {
             if (number == 1)
             {
-                Console.WriteLine(tank.angleTank);
-
                 GL.LoadIdentity();
                 GL.PushMatrix();
                 GL.Translate(tank.x, tank.y, 0);
