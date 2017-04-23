@@ -46,20 +46,14 @@ namespace client
 
             GL.ClearColor(0.1f, 0.2f, 0.5f, 0.0f);
 
-
-
-            //GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
             greenTank = LoadTexture("./tank.png", 1);
             blueTank = LoadTexture("./tank1.png", 1);
             greenTankWeapon = LoadTexture("./weapon.png", 1);
             blueTankWeapon = LoadTexture("./weapon1.png", 1);
+
             GL.Enable(EnableCap.Texture2D);
-            //Basically enables the alpha channel to be used in the color buffer
             GL.Enable(EnableCap.Blend);
-            //The operation/order to blend
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            //Use for pixel depth comparing before storing in the depth buffer
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.DepthTest);
 
@@ -75,29 +69,13 @@ namespace client
             int texture = GL.GenTexture();
 
             GL.BindTexture(TextureTarget.Texture2D, texture);
-            switch (quality)
-            {
-                case 0:
-                default:
-                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
-                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
-                    break;
-                case 1:
-                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Nearest);
-                    GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Nearest);
-                    break;
-            }
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Nearest);
 
-            if (repeat)
-            {
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)All.Repeat);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)All.Repeat);
-            }
-            else
-            {
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)All.ClampToEdge);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)All.ClampToEdge);
-            }
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)All.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)All.Repeat);
+
 
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bitmap.Width, bitmap.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
 
@@ -120,6 +98,69 @@ namespace client
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI / 4, Width / (float)Height, 1.0f, 64.0f);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref projection);
+        }
+
+        protected override void OnUpdateFrame(FrameEventArgs e)
+        {
+            base.OnUpdateFrame(e);
+
+            if (Keyboard[Key.Escape])
+                Exit();
+            else if (Keyboard[Key.Right])
+            {
+                moveTankRight(tank1);
+            }
+            else if (Keyboard[Key.Left])
+            {
+                moveTankLeft(tank1);
+            }
+            else if (Keyboard[Key.Up])
+            {
+                tank1.angleDula += 10;
+                tank2.angleDula += 10;
+            }
+            else if (Keyboard[Key.Down])
+            {
+                tank1.angleDula -= 10;
+                tank2.angleDula -= 10;
+            }
+            else if (Keyboard[Key.Space])
+            {
+                fireBullet(tank1);
+            }
+
+            if (tank1.angleDula > 65)
+            {
+                tank1.angleDula = 65;
+                tank2.angleDula = 65;
+            }
+            else if (tank1.angleDula < -15)
+            {
+                tank1.angleDula = -15;
+                tank2.angleDula = -15;
+            }
+
+        }
+
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            base.OnRenderFrame(e);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            Matrix4 modelview = Matrix4.LookAt(Vector3.Zero, Vector3.UnitZ, Vector3.UnitY);
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadMatrix(ref modelview);
+            drawTerrain(ClientRectangle.Width, ClientRectangle.Height / 4, ClientRectangle.Height / 100, 0.8);
+            drawTank(tank1, 1, e);
+            //drawTank(tank2, 2, e);
+            SwapBuffers();
+
+            if (initTank == false)
+            {
+                initTank = true;
+                moveTankRight(tank1);
+            }
         }
 
         private void moveTankRight(Tank tank)
@@ -146,78 +187,6 @@ namespace client
             tank.terrainHeight = getHeightByX(tank.x);
         }
 
-        protected override void OnUpdateFrame(FrameEventArgs e)
-        {
-            base.OnUpdateFrame(e);
-
-            if (Keyboard[Key.Escape])
-                Exit();
-            else if (Keyboard[Key.Right])
-            {
-                moveTankRight(tank1);
-            }
-            else if (Keyboard[Key.Left])
-            {
-                moveTankLeft(tank1);
-            }
-            else if (Keyboard[Key.Up])
-            {
-                tank1.angleDula +=  10;
-                tank2.angleDula += 10;
-            }
-            else if (Keyboard[Key.Down])
-            {
-                tank1.angleDula -= 10;
-                tank2.angleDula -= 10;
-            }
-            else if (Keyboard[Key.PageUp])
-            {
-                tank1.angleTank += 10;
-                tank2.angleTank += 10;
-            }
-            else if (Keyboard[Key.PageDown])
-            {
-                tank1.angleTank -= 10;
-                tank2.angleTank -= 10;
-            }
-            else if (Keyboard[Key.Space])
-            {
-                fireBullet(tank1);
-            }
-
-            if (tank1.angleDula > 65)
-            {
-                tank1.angleDula = 65;
-                tank2.angleDula = 65;
-            }
-            else if (tank1.angleDula < -15)
-            {
-                tank1.angleDula = -15;
-                tank2.angleDula = -15;
-            }
-            
-        }
-
-        protected override void OnRenderFrame(FrameEventArgs e)
-        {
-            base.OnRenderFrame(e);
-
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            Matrix4 modelview = Matrix4.LookAt(Vector3.Zero, Vector3.UnitZ, Vector3.UnitY);
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref modelview);
-            drawTerrain(ClientRectangle.Width, ClientRectangle.Height / 4, ClientRectangle.Height / 100, 0.8);
-            drawTank(tank1, 1, e);
-            //drawTank(tank2, 2, e);
-            SwapBuffers();
-
-            if (initTank == false)
-            {
-                initTank = true;
-                moveTankRight(tank1);
-            }
-        }
         public void drawTank(Tank tank, int number, FrameEventArgs e)
         {
             if (number == 1)
