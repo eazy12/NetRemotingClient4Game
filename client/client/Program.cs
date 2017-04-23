@@ -24,6 +24,11 @@ namespace client
         private double bulletYt;
         private ArrayList terrainPoints = new ArrayList();
         private bool initTank = false;
+        Random rnd = new Random();
+        double rand;
+
+        double initialX = 0;
+
 
         private const double TANK_WIDTH = 0.25 / 4;
         private const double TANK_HEIGHT = 0.25 / 4;
@@ -37,6 +42,7 @@ namespace client
         {
             tank1 = new Tank(TANK_WIDTH, TANK_HEIGHT, TANK_SPEED, -1 + TANK_WIDTH, 0, 0);
             tank2 = new Tank(TANK_WIDTH, TANK_HEIGHT, TANK_SPEED, 0.3, 0, 0);
+            rand = rnd.Next(8, 10);
             VSync = VSyncMode.On;
         }
 
@@ -109,6 +115,7 @@ namespace client
             else if (Keyboard[Key.Right])
             {
                 moveTankRight(tank1);
+               
             }
             else if (Keyboard[Key.Left])
             {
@@ -253,7 +260,8 @@ namespace client
 
         private void fireBullet(Tank tank)
         {
-
+            initialX = tank.x;
+            Console.WriteLine(initialX);
             double angle = tank.angleDula + tank.angleTank;
             timeInitial = DateTime.Now;
 
@@ -291,10 +299,13 @@ namespace client
                 double pointValue = Convert.ToDouble(terrainPoints[(int)i]);
                 double x = (i - 100) / 100;
                 double y = pointValue;
+                
                 GL.Vertex2(x, y);
             }
+            
             GL.End();
             GL.PopMatrix();
+            GL.LoadIdentity();
         }
 
         private double getHeightByX(double x)
@@ -305,39 +316,56 @@ namespace client
 
         private void drawBullet(Tank tank, double angle, double X0, double Y0)
         {
+            // УБРАТЬ t, ПРИНЯТЬ ЗА T XT, А ПРИРАЩЕНИЕ ИКСА ЭТО СКОРОСТЬ 
+            if(LEFT_EXTREME_COORD > initialX  || initialX >RIGHT_EXTREME_COORD )
+            {
+                Console.WriteLine("За границей");
+                aTimer.Enabled = false;
+                aTimer.AutoReset = false;
+                return;
+            }
             TimeSpan currentTime = DateTime.Now - timeInitial;
-            int V0 = 3;
+            double V0 = 0.3;
             int t = 10; //currentTime.Seconds * 1000 + currentTime.Milliseconds;
             double g = 9.8;
 
-            double Vx0 = V0 * Math.Cos(angle);
-            double Vy0 = V0 * Math.Sin(angle);
+            double Vx0 = V0 * Math.Cos(angle * 180.0 / Math.PI);
+            double Vy0 = V0 * Math.Sin(angle * 180.0 / Math.PI);
+            
+            double Yt = Y0 + Vy0 * initialX - g * initialX * initialX / 2;
 
-            double Xt = X0 + Vx0 * t;
-            double Yt = Y0 + Vy0 * t - g * t * t / 2;
+            initialX = initialX + V0;
+            double yterrain;
+            yterrain = 0.1 * Math.Sin(initialX / rand);
 
-            Console.WriteLine("Math.Cos(angle): " + Math.Cos(angle));
-            Console.WriteLine("angle: " + angle);
-            Console.WriteLine("t: " + t);
-            Console.WriteLine("Vx0: " + Vx0 + "; Vy0: " + Vy0);
-            Console.WriteLine("Xt: " + Xt + "; Yt: " + Yt);
-            Console.WriteLine("-------------------------");
+           //Console.WriteLine(yterrain + " " + rand  + " " + Yt);
+            if (Math.Abs(yterrain - Yt)  < 1.0f )
+            {
+                Console.WriteLine("Boom");
+                aTimer.Enabled = false;
+                aTimer.AutoReset = false;
+                return;
+            }
+            
+            //Console.WriteLine("Math.Cos(angle): " + Math.Cos(angle));
+            //Console.WriteLine("angle: " + angle);
+            //Console.WriteLine("t: " + t);
+            //Console.WriteLine("Vx0: " + Vx0 + "; Vy0: " + Vy0);
+            //Console.WriteLine("Xt: " + Xt + "; Yt: " + Yt);
+            //Console.WriteLine("-------------------------");
 
-            bulletXt = Xt;
+            
             bulletYt = Yt;
 
-        /*
+            GL.LoadIdentity();
             GL.PushMatrix();
-            GL.Begin(BeginMode.Quads);
+            GL.PointSize(25);
             GL.Color3(1.0f, 1.0f, 0.0f);
-            GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
-            GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
-            GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
-            GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
+            GL.Begin(BeginMode.Points);
+            Console.WriteLine(initialX + " " + Yt);
+            GL.Vertex2(initialX, Yt);
             GL.End();
             GL.PopMatrix();
-            GL.PopMatrix();
-            */
     }
 
     [STAThread]
