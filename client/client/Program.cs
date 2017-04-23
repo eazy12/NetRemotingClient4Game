@@ -254,6 +254,17 @@ namespace client
                 
             }
             GL.BindTexture(TextureTarget.Texture2D, 0);
+
+            GL.LoadIdentity();
+            GL.PushMatrix();
+            GL.PointSize(25);
+            GL.Color3(1.0f, 1.0f, 0.0f);
+            GL.Begin(BeginMode.Points);
+            Console.WriteLine(initialX + " " + bulletYt);
+            GL.Vertex2(initialX, bulletYt);
+            GL.End();
+            GL.PopMatrix();
+
             GL.LoadIdentity();
 
         }
@@ -265,7 +276,7 @@ namespace client
             double angle = tank.angleDula + tank.angleTank;
             timeInitial = DateTime.Now;
 
-            aTimer = new Timer(30);
+            aTimer = new Timer(1000);
             aTimer.Elapsed += delegate { drawBullet(tank, angle, tank.x, tank.y); };
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
@@ -325,7 +336,7 @@ namespace client
                 return;
             }
             TimeSpan currentTime = DateTime.Now - timeInitial;
-            double V0 = 0.3;
+            double V0 = 0.01;
             int t = 10; //currentTime.Seconds * 1000 + currentTime.Milliseconds;
             double g = 9.8;
 
@@ -356,7 +367,7 @@ namespace client
 
             
             bulletYt = Yt;
-
+            /*
             GL.LoadIdentity();
             GL.PushMatrix();
             GL.PointSize(25);
@@ -366,6 +377,7 @@ namespace client
             GL.Vertex2(initialX, Yt);
             GL.End();
             GL.PopMatrix();
+            */
     }
 
     [STAThread]
