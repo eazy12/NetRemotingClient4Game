@@ -175,7 +175,7 @@ namespace client
             Matrix4 modelview = Matrix4.LookAt(Vector3.Zero, Vector3.UnitZ, Vector3.UnitY);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref modelview);
-            drawTerrain(ClientRectangle.Width / 100, ClientRectangle.Height / 80, ClientRectangle.Height / 20, 0.9);
+            drawTerrain(ClientRectangle.Width / 100, ClientRectangle.Height / 50, ClientRectangle.Height / 7, 0.95);
             drawTank(tank1, e);
             SwapBuffers();
         }
@@ -272,17 +272,17 @@ namespace client
                 }
             }
 
+            GL.LoadIdentity();
             GL.PushMatrix();
             GL.Color3(1.0f, 1.0f, 0.0f);
-            GL.LineWidth(2);
+            GL.LineWidth(5);
             GL.Begin(BeginMode.LineStrip);
-            for (double i = 0; i < points.Count; i++)
+            for (double i = 0, j = -1; i < points.Count; i++, j += 0.1)
             {
                 double pointValue = Convert.ToDouble(points[(int)i]);
-                double x = i / 10;
+                double x = j;
                 double y = pointValue / 1000;
                 GL.Vertex2(x, y);
-                //Console.WriteLine(x + " " + y);
             }
             GL.End();
             GL.PopMatrix();
