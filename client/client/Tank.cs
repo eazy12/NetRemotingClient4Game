@@ -11,24 +11,34 @@ namespace client
         double hp { get; set; }
         double x { get; set; }
         double y { get; set; }
-        int angleDula { get; set; }
-        int angleTank { get; set; }
+        double angleDula { get; set; }
+        double angleTank { get; set; }
         double weaponCD { get; set; }
         double maxAngle { get; set; }
     }
 
     class Tank : ITank
     {
+        private double tankWidth;
+        private double tankHeight;
+        private double tankSpeed;
         private double _hp = 100;
         private double _x;
+        private double _oldX;
         private double _y;
-        private int _angleDula = 0;
-        private int _angleTank = 0;
+        private double _oldY;
+        private double _angleDula = 0;
+        private double _angleTank = 0;
         private double _weaponCD = 2;
         private double _maxAngle = 70;
+        private double _terrainHeight;
 
-        public Tank(float xInput, float yInput, int angleTankInput)
+        public Tank(double tankWidthInput, double tankHeightInput, double tankSpeedInput, double xInput, double yInput, int angleTankInput)
         {
+            tankWidth = tankWidthInput;
+            tankHeight = tankHeightInput;
+            tankSpeed = tankSpeedInput;
+
             x = xInput;
             y = yInput;
             angleTank = angleTankInput;
@@ -58,6 +68,7 @@ namespace client
 
             set
             {
+                _oldX = _x;
                 _x = value;
             }
         }
@@ -66,16 +77,17 @@ namespace client
         {
             get
             {
-                return _y;
+                return _y + tankHeight;
             }
 
             set
             {
+                _oldY = _y;
                 _y = value;
             }
         }
 
-        public int angleDula
+        public double angleDula
         {
             get
             {
@@ -88,11 +100,11 @@ namespace client
             }
         }
 
-        public int angleTank
+        public double angleTank
         {
             get
             {
-                return _angleTank;
+                return Math.Atan((_y - _oldY) / (_x - _oldX) ) * 180 / Math.PI;
             }
 
             set
@@ -124,6 +136,19 @@ namespace client
             set
             {
                 _maxAngle = value;
+            }
+        }
+
+        public double terrainHeight
+        {
+            get
+            {
+                return _terrainHeight;
+            }
+
+            set
+            {
+                _terrainHeight = value;
             }
         }
     }

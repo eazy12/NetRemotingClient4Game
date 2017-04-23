@@ -24,7 +24,8 @@ namespace client
         private double bulletYt;
         private ArrayList terrainPoints = new ArrayList();
 
-        private const double TANK_WIDTH = 0.1;
+        private const double TANK_WIDTH = 0.25 / 4;
+        private const double TANK_HEIGHT = 0.25 / 4;
         private const double TANK_SPEED = 0.01;
         private const int LEFT_EXTREME_COORD = -1;
         private const int RIGHT_EXTREME_COORD = 1;
@@ -33,8 +34,8 @@ namespace client
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
         {
-            tank1 = new Tank(1.0f , 0.0f , 0);
-            tank2 = new Tank(0.3f, 0, 0);
+            tank1 = new Tank(TANK_WIDTH, TANK_HEIGHT, TANK_SPEED, 1, 0, 0);
+            tank2 = new Tank(TANK_WIDTH, TANK_HEIGHT, TANK_SPEED, 0.3, 0, 0);
             VSync = VSyncMode.On;
         }
 
@@ -134,10 +135,10 @@ namespace client
                 }
                 
                 tank1.x += TANK_SPEED;
-                tank2.x += TANK_SPEED;
+                tank1.y = getHeightByX(tank1.x);
+                tank1.terrainHeight = getHeightByX(tank1.x);
 
-                double heightByX = getHeightByX(tank1.x);
-                Console.WriteLine(heightByX);
+                tank2.x += TANK_SPEED;
             }
             else if (Keyboard[Key.Left])
             {
@@ -147,10 +148,10 @@ namespace client
                 }
 
                 tank1.x -= TANK_SPEED;
-                tank2.x -= TANK_SPEED;
+                tank1.y = getHeightByX(tank1.x);
+                tank1.terrainHeight = getHeightByX(tank1.x);
 
-                double heightByX = getHeightByX(tank1.x);
-                Console.WriteLine(heightByX);
+                tank2.x -= TANK_SPEED;
             }
             else if (Keyboard[Key.Up])
             {
@@ -208,6 +209,8 @@ namespace client
         {
             if (number == 1)
             {
+                Console.WriteLine(tank.angleTank);
+
                 GL.LoadIdentity();
                 GL.PushMatrix();
                 GL.Translate(tank.x, tank.y, 0);
@@ -271,7 +274,7 @@ namespace client
         private void fireBullet(Tank tank)
         {
 
-            int angle = tank.angleDula + tank.angleTank;
+            double angle = tank.angleDula + tank.angleTank;
             timeInitial = DateTime.Now;
 
             aTimer = new Timer(30);
@@ -320,7 +323,7 @@ namespace client
             return Convert.ToDouble(terrainPoints[(int)x]);
         }
 
-        private void drawBullet(Tank tank, int angle, double X0, double Y0)
+        private void drawBullet(Tank tank, double angle, double X0, double Y0)
         {
             TimeSpan currentTime = DateTime.Now - timeInitial;
             int V0 = 3;
