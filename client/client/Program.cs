@@ -22,12 +22,13 @@ namespace client
         private DateTime timeInitial;
         private double bulletXt;
         private double bulletYt;
-        private ArrayList points = new ArrayList();
+        private ArrayList terrainPoints = new ArrayList();
 
         private const double TANK_WIDTH = 0.1;
         private const double TANK_SPEED = 0.01;
         private const int LEFT_EXTREME_COORD = -1;
         private const int RIGHT_EXTREME_COORD = 1;
+        private const int TERRAIN_POINTS_COUNT = 200;
 
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
@@ -198,7 +199,7 @@ namespace client
             Matrix4 modelview = Matrix4.LookAt(Vector3.Zero, Vector3.UnitZ, Vector3.UnitY);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref modelview);
-            drawTerrain(ClientRectangle.Width / 100, ClientRectangle.Height / 50, ClientRectangle.Height / 7, 0.95);
+            drawTerrain(ClientRectangle.Width, ClientRectangle.Height / 4, ClientRectangle.Height / 100, 0.8);
             drawTank(tank1, 1, e);
             //drawTank(tank2, 2, e);
             SwapBuffers();
@@ -281,51 +282,32 @@ namespace client
        
         private void drawTerrain(double width, double height, double displace, double roughness)
         {
-            if (points.Count == 0)
+            double amplitude = 0.1;
+
+            if (terrainPoints.Count == 0)
             {
-                // Gives us a power of 2 based on our width
-                int power = 20; //(int)Math.Pow(2, Math.Ceiling(Math.Log(width) / (Math.Log(2))));
                 Random rnd = new Random();
-                double rndValue1 = rnd.Next(0, 100);
-                double rndValue2 = rnd.Next(0, 100);
-
-                // Set the initial left point
-                points.Add(height / 2 + (rndValue1 / 100 * displace * 2) - displace);
-                // set the initial right point
-                for (int k = 1; k < power; k++)
+                double rand = rnd.Next(8, 10);
+                Console.WriteLine(rand);
+                for (int x = 0; x < TERRAIN_POINTS_COUNT; x++)
                 {
-                    points.Add(0);
-                }
-                points.Add(height / 2 + (rndValue2 / 100 * displace * 2) - displace);
-
-                displace *= roughness;
-
-                for (int i = 1; i < power; i *= 2)
-                {
-                    // Iterate through each segment calculating the center point
-                    for (int j = (power / i) / 2; j < power; j += power / i)
-                    {
-                        double rndValueLocal = rnd.Next(0, 100);
-                        double res = ((Convert.ToDouble(points[j - (power / i) / 2]) + Convert.ToDouble(points[j + (power / i) / 2])) / 2);
-                        res += (rndValueLocal / 100 * displace * 2) - displace;
-                        points.Insert(j, res);
-                    }
-                    // reduce our random range
-                    displace *= roughness;
+                    double val = amplitude * Math.Sin(x / rand);
+                    terrainPoints.Add(val);
                 }
             }
 
 
-            
+            GL.LoadIdentity();
             GL.PushMatrix();
             GL.Color3(1.0f, 1.0f, 0.0f);
             GL.LineWidth(5);
             GL.Begin(BeginMode.LineStrip);
-            for (double i = 0, j = -1; i < points.Count; i++, j += 0.1)
+
+            for (double i = 0; i < TERRAIN_POINTS_COUNT; i++)
             {
-                double pointValue = Convert.ToDouble(points[(int)i]);
-                double x = j;
-                double y = pointValue / 1000;
+                double pointValue = Convert.ToDouble(terrainPoints[(int)i]);
+                double x = (i - 100) / 100;
+                double y = pointValue;
                 GL.Vertex2(x, y);
             }
             GL.End();
@@ -334,9 +316,8 @@ namespace client
 
         private double getHeightByX(double x)
         {
-            x = Math.Round(x, 1);
-            x = (x + 1) * 10;
-            return Convert.ToDouble(points[(int)x]);
+            x = (x + 1) * 100;
+            return Convert.ToDouble(terrainPoints[(int)x]);
         }
 
         private void drawBullet(Tank tank, int angle, double X0, double Y0)
