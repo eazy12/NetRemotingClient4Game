@@ -7,6 +7,8 @@ using OpenTK.Input;
 using System.Timers;
 using System.Collections;
 
+
+
 namespace client
 {
     class Game : GameWindow
@@ -21,6 +23,11 @@ namespace client
         private double bulletXt;
         private double bulletYt;
         private ArrayList points = new ArrayList();
+
+        private const double TANK_WIDTH = 0.1;
+        private const double TANK_SPEED = 0.01;
+        private const int LEFT_EXTREME_COORD = -1;
+        private const int RIGHT_EXTREME_COORD = 1;
 
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
@@ -120,13 +127,23 @@ namespace client
                 Exit();
             else if (Keyboard[Key.Right])
             {
-                tank1.x += 0.1f;
-                tank2.x += 0.1f;
+                if (tank1.x + TANK_SPEED + TANK_WIDTH > RIGHT_EXTREME_COORD)
+                {
+                    tank1.x = RIGHT_EXTREME_COORD - TANK_WIDTH;
+                }
+                
+                tank1.x += TANK_SPEED;
+                tank2.x += TANK_SPEED;
             }
             else if (Keyboard[Key.Left])
             {
-                tank1.x -= 0.1f;
-                tank2.x -= 0.1f;
+                if (tank1.x - TANK_SPEED - TANK_WIDTH < LEFT_EXTREME_COORD)
+                {
+                    tank1.x = LEFT_EXTREME_COORD + TANK_WIDTH;
+                }
+
+                tank1.x -= TANK_SPEED;
+                tank2.x -= TANK_SPEED;
             }
             else if (Keyboard[Key.Up])
             {
@@ -309,7 +326,7 @@ namespace client
             GL.PopMatrix();
         }
 
-        private void drawBullet(Tank tank, int angle, float X0, float Y0)
+        private void drawBullet(Tank tank, int angle, double X0, double Y0)
         {
             TimeSpan currentTime = DateTime.Now - timeInitial;
             int V0 = 3;

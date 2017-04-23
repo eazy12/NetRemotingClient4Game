@@ -8,24 +8,24 @@ namespace client
 {
     interface ITank
     {
-        float hp { get; set; }
-        float x { get; set; }
-        float y { get; set; }
+        double hp { get; set; }
+        double x { get; set; }
+        double y { get; set; }
         int angleDula { get; set; }
         int angleTank { get; set; }
-        float weaponCD { get; set; }
-        float maxAngle { get; set; }
+        double weaponCD { get; set; }
+        double maxAngle { get; set; }
     }
 
     class Tank : ITank
     {
-        private float _hp = 100;
-        private float _x;
-        private float _y;
+        private double _hp = 100;
+        private double _x;
+        private double _y;
         private int _angleDula = 0;
         private int _angleTank = 0;
-        private float _weaponCD = 2;
-        private float _maxAngle = 70;
+        private double _weaponCD = 2;
+        private double _maxAngle = 70;
 
         public Tank(float xInput, float yInput, int angleTankInput)
         {
@@ -33,10 +33,9 @@ namespace client
             y = yInput;
             angleTank = angleTankInput;
         }
+               
 
-        
-
-        public float hp
+        public double hp
         {
             get
             {
@@ -50,7 +49,7 @@ namespace client
         }
 
 
-        public float x
+        public double x
         {
             get
             {
@@ -63,7 +62,7 @@ namespace client
             }
         }
 
-        public float y
+        public double y
         {
             get
             {
@@ -102,7 +101,7 @@ namespace client
             }
         }
 
-        public float weaponCD
+        public double weaponCD
         {
             get
             {
@@ -115,7 +114,7 @@ namespace client
             }
         }
 
-        public float maxAngle
+        public double maxAngle
         {
             get
             {
