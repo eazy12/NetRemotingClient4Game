@@ -26,7 +26,7 @@ namespace client
         public Game()
             : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
         {
-            tank1 = new Tank(0, 0, 0);
+            tank1 = new Tank(1.0f , 0.0f , 0);
             tank2 = new Tank(0.3f, 0, 0);
             VSync = VSyncMode.On;
         }
@@ -188,51 +188,72 @@ namespace client
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref modelview);
             drawTerrain(ClientRectangle.Width / 100, ClientRectangle.Height / 80, ClientRectangle.Height / 20, 0.9);
-            drawTank(tank1, e);
+            drawTank(tank1, 1,e);
+            drawTank(tank2, 2,e);
             SwapBuffers();
         }
-        public void drawTank(Tank tank, FrameEventArgs e)
+        public void drawTank(Tank tank, int number, FrameEventArgs e)
         {
-            
-            GL.LoadIdentity();
-            GL.PushMatrix();
-            GL.Translate(tank.x, tank.y, 0);
-            GL.Rotate(tank.angleTank, 0,0, 1.0f);
+            if (number == 1)
+            {
+                GL.LoadIdentity();
+                GL.PushMatrix();
+                GL.Translate(tank.x, tank.y, 0);
+                GL.Rotate(tank.angleTank, 0, 0, 1.0f);
                 GL.BindTexture(TextureTarget.Texture2D, greenTank);
                 GL.Begin(BeginMode.Quads);
-                    GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.25f/4, 0.25f/4);
-                    GL.TexCoord2(0f, 0f); GL.Vertex2(-0.25f/4, 0.25f/4);
-                    GL.TexCoord2(0f, 1f); GL.Vertex2(-0.25f/4, -0.25f/4);
-                    GL.TexCoord2(1f, 1f); GL.Vertex2(0.25f/4, -0.25f/4);
+                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.25f / 4, 0.25f / 4);
+                GL.TexCoord2(0f, 0f); GL.Vertex2(-0.25f / 4, 0.25f / 4);
+                GL.TexCoord2(0f, 1f); GL.Vertex2(-0.25f / 4, -0.25f / 4);
+                GL.TexCoord2(1f, 1f); GL.Vertex2(0.25f / 4, -0.25f / 4);
                 GL.End();
 
-            
-            GL.BindTexture(TextureTarget.Texture2D, greenTankWeapon);
-            GL.Translate(0.05/4, 0.1/4, -0.001f);
-            GL.Rotate(tank.angleDula, 0, 0, 4.0f);
-            GL.Begin(BeginMode.Quads);
 
-            GL.TexCoord3(1.0f, 0.0f, 0.0f); GL.Vertex2(0.4f/4, 0.0f/4);
-            GL.TexCoord3(0f, 0f, 0.0f); GL.Vertex2(0.0f/4, 0.0f/4);
-            GL.TexCoord3(0f, 1f, 0.0f); GL.Vertex2(0.0f/4, 0.05f/4);
-            GL.TexCoord3(1f, 1f, 0.0f); GL.Vertex2(0.4f/4, 0.05f/4);
-            GL.End();
-            GL.PopMatrix();
+                GL.BindTexture(TextureTarget.Texture2D, greenTankWeapon);
+                GL.Translate(0.05 / 4, 0.1 / 4, -0.001f);
+                GL.Rotate(tank.angleDula, 0, 0, 4.0f);
+                GL.Begin(BeginMode.Quads);
 
+                GL.TexCoord3(1.0f, 0.0f, 0.0f); GL.Vertex2(0.4f / 4, 0.0f / 4);
+                GL.TexCoord3(0f, 0f, 0.0f); GL.Vertex2(0.0f / 4, 0.0f / 4);
+                GL.TexCoord3(0f, 1f, 0.0f); GL.Vertex2(0.0f / 4, 0.05f / 4);
+                GL.TexCoord3(1f, 1f, 0.0f); GL.Vertex2(0.4f / 4, 0.05f / 4);
+                GL.End();
+                GL.PopMatrix();
+                
+            }
+            else
+            {
+                GL.LoadIdentity();
+                GL.PushMatrix();
+                GL.Translate(tank.x, tank.y, 0);
+                GL.Rotate(tank.angleTank, 0, 0, 1.0f);
+                GL.BindTexture(TextureTarget.Texture2D, blueTank);
+                GL.Begin(BeginMode.Quads);
+                GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.25f / 4, 0.25f / 4);
+                GL.TexCoord2(0f, 0f); GL.Vertex2(-0.25f / 4, 0.25f / 4);
+                GL.TexCoord2(0f, 1f); GL.Vertex2(-0.25f / 4, -0.25f / 4);
+                GL.TexCoord2(1f, 1f); GL.Vertex2(0.25f / 4, -0.25f / 4);
+                GL.End();
+
+
+                GL.BindTexture(TextureTarget.Texture2D, blueTankWeapon);
+                GL.Translate(0.05 / 4, 0.1 / 4, -0.001f);
+                GL.Rotate(tank.angleDula+180.0f, 0, 0, -4.0f);
+                GL.Begin(BeginMode.Quads);
+
+                GL.TexCoord3(1.0f, 0.0f, 0.0f); GL.Vertex2(0.4f / 4, 0.0f / 4);
+                GL.TexCoord3(0f, 0f, 0.0f); GL.Vertex2(0.0f / 4, 0.0f / 4);
+                GL.TexCoord3(0f, 1f, 0.0f); GL.Vertex2(0.0f / 4, 0.05f / 4);
+                GL.TexCoord3(1f, 1f, 0.0f); GL.Vertex2(0.4f / 4, 0.05f / 4);
+                GL.End();
+                GL.PopMatrix();
+
+                
+            }
             GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.LoadIdentity();
 
-            /*
-            GL.PushMatrix();
-            GL.Begin(BeginMode.Quads);
-            GL.Color3(1.0f, 1.0f, 0.0f);
-            GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
-            GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
-            GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
-            GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
-            GL.End();
-            GL.PopMatrix();
-            GL.PopMatrix();
-            */
         }
 
         private void fireBullet(Tank tank)
@@ -283,6 +304,8 @@ namespace client
                 }
             }
 
+
+            
             GL.PushMatrix();
             GL.Color3(1.0f, 1.0f, 0.0f);
             GL.LineWidth(2);
@@ -293,7 +316,7 @@ namespace client
                 double x = i / 10;
                 double y = pointValue / 1000;
                 GL.Vertex2(x, y);
-                //Console.WriteLine(x + " " + y);
+                Console.WriteLine(x + " " + y);
             }
             GL.End();
             GL.PopMatrix();
@@ -321,9 +344,22 @@ namespace client
 
             bulletXt = Xt;
             bulletYt = Yt;
-        }
 
-        [STAThread]
+        /*
+            GL.PushMatrix();
+            GL.Begin(BeginMode.Quads);
+            GL.Color3(1.0f, 1.0f, 0.0f);
+            GL.Vertex2(bulletXt + 0.1f, bulletYt + 0.1f);
+            GL.Vertex2(bulletXt - 0.1f, bulletYt + 0.1f);
+            GL.Vertex2(bulletXt - 0.1f, bulletYt - 0.1f);
+            GL.Vertex2(bulletXt + 0.1f, bulletYt - 0.1f);
+            GL.End();
+            GL.PopMatrix();
+            GL.PopMatrix();
+            */
+    }
+
+    [STAThread]
         static void Main()
         {
             // The 'using' idiom guarantees proper resource cleanup.
