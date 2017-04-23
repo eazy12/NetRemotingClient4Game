@@ -134,6 +134,9 @@ namespace client
                 
                 tank1.x += TANK_SPEED;
                 tank2.x += TANK_SPEED;
+
+                double heightByX = getHeightByX(tank1.x);
+                Console.WriteLine(heightByX);
             }
             else if (Keyboard[Key.Left])
             {
@@ -144,6 +147,9 @@ namespace client
 
                 tank1.x -= TANK_SPEED;
                 tank2.x -= TANK_SPEED;
+
+                double heightByX = getHeightByX(tank1.x);
+                Console.WriteLine(heightByX);
             }
             else if (Keyboard[Key.Up])
             {
@@ -278,7 +284,7 @@ namespace client
             if (points.Count == 0)
             {
                 // Gives us a power of 2 based on our width
-                int power = (int)Math.Pow(2, Math.Ceiling(Math.Log(width) / (Math.Log(2))));
+                int power = 20; //(int)Math.Pow(2, Math.Ceiling(Math.Log(width) / (Math.Log(2))));
                 Random rnd = new Random();
                 double rndValue1 = rnd.Next(0, 100);
                 double rndValue2 = rnd.Next(0, 100);
@@ -324,6 +330,13 @@ namespace client
             }
             GL.End();
             GL.PopMatrix();
+        }
+
+        private double getHeightByX(double x)
+        {
+            x = Math.Round(x, 1);
+            x = (x + 1) * 10;
+            return Convert.ToDouble(points[(int)x]);
         }
 
         private void drawBullet(Tank tank, int angle, double X0, double Y0)
