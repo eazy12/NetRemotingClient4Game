@@ -193,6 +193,7 @@ namespace client
             drawTank(tank1, e);
             SwapBuffers();
         }
+
         public void drawTank(Tank tank, FrameEventArgs e)
         {
             /*
@@ -221,7 +222,7 @@ namespace client
             GL.End();
             GL.PopMatrix(); */
 
-            /*
+            
             GL.PushMatrix();
             GL.Begin(BeginMode.Quads);
             GL.Color3(1.0f, 1.0f, 0.0f);
@@ -232,7 +233,7 @@ namespace client
             GL.End();
             GL.PopMatrix();
             GL.PopMatrix();
-            */
+            
         }
 
         private void fireBullet(Tank tank)
