@@ -118,9 +118,7 @@ namespace client
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-
             GL.Viewport(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
-
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI / 4, Width / (float)Height, 1.0f, 64.0f);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref projection);
@@ -134,13 +132,13 @@ namespace client
                 Exit();
             else if (Keyboard[Key.Right])
             {
-                tank1.x -= 0.1f;
-                tank2.x -= 0.1f;
+                tank1.x += 0.1f;
+                tank2.x += 0.1f;
             }
             else if (Keyboard[Key.Left])
             {
-                tank1.x += 0.1f;
-                tank2.x += 0.1f;
+                tank1.x -= 0.1f;
+                tank2.x -= 0.1f;
             }
             else if (Keyboard[Key.Up])
             {
@@ -195,31 +193,33 @@ namespace client
         }
         public void drawTank(Tank tank, FrameEventArgs e)
         {
-            /*
+            
             GL.LoadIdentity();
             GL.PushMatrix();
-            GL.Translate(tank.x, tank.y, -5);
-            GL.Rotate(tank.angleTank, 0,0, 4.0f);
+            GL.Translate(tank.x, tank.y, 0);
+            GL.Rotate(tank.angleTank, 0,0, 1.0f);
                 GL.BindTexture(TextureTarget.Texture2D, greenTank);
                 GL.Begin(BeginMode.Quads);
-                    GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.25f, 0.25f);
-                    GL.TexCoord2(0f, 0f); GL.Vertex2(-0.25f, 0.25f);
-                    GL.TexCoord2(0f, 1f); GL.Vertex2(-0.25f, -0.25f);
-                    GL.TexCoord2(1f, 1f); GL.Vertex2(0.25f, -0.25f);
+                    GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(0.25f/4, 0.25f/4);
+                    GL.TexCoord2(0f, 0f); GL.Vertex2(-0.25f/4, 0.25f/4);
+                    GL.TexCoord2(0f, 1f); GL.Vertex2(-0.25f/4, -0.25f/4);
+                    GL.TexCoord2(1f, 1f); GL.Vertex2(0.25f/4, -0.25f/4);
                 GL.End();
 
             
             GL.BindTexture(TextureTarget.Texture2D, greenTankWeapon);
-            GL.Translate(0.05, 0.1, 0);
+            GL.Translate(0.05/4, 0.1/4, -0.001f);
             GL.Rotate(tank.angleDula, 0, 0, 4.0f);
             GL.Begin(BeginMode.Quads);
 
-            GL.TexCoord3(1.0f, 0.0f, 0.0f); GL.Vertex3(0.4f, 0.0f, 0.01f);
-            GL.TexCoord3(0f, 0f, 0.0f); GL.Vertex3(0.0f, 0.0f, 0.01f);
-            GL.TexCoord3(0f, 1f, 0.0f); GL.Vertex3(0.0f, 0.05f, 0.01f);
-            GL.TexCoord3(1f, 1f, 0.0f); GL.Vertex3(0.4f, 0.05f, 0.01f);
+            GL.TexCoord3(1.0f, 0.0f, 0.0f); GL.Vertex2(0.4f/4, 0.0f/4);
+            GL.TexCoord3(0f, 0f, 0.0f); GL.Vertex2(0.0f/4, 0.0f/4);
+            GL.TexCoord3(0f, 1f, 0.0f); GL.Vertex2(0.0f/4, 0.05f/4);
+            GL.TexCoord3(1f, 1f, 0.0f); GL.Vertex2(0.4f/4, 0.05f/4);
             GL.End();
-            GL.PopMatrix(); */
+            GL.PopMatrix();
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
 
             /*
             GL.PushMatrix();
