@@ -21,11 +21,14 @@ namespace client
         private Timer aTimer;
         private DateTime timeInitial;
         private double bulletXt;
-        private double bulletYt;
+        private double bulletYt = 0.4;
         private ArrayList terrainPoints = new ArrayList();
         private bool initTank = false;
         Random rnd = new Random();
         double rand;
+        bool boom = false;
+        double boomX = 0.0;
+        double boomY = 0.0;
 
         double initialX = 0;
 
@@ -222,7 +225,7 @@ namespace client
                 GL.TexCoord3(1f, 1f, 0.0f); GL.Vertex2(0.4f / 4, 0.05f / 4);
                 GL.End();
                 GL.PopMatrix();
-                
+
             }
             else
             {
@@ -241,7 +244,7 @@ namespace client
 
                 GL.BindTexture(TextureTarget.Texture2D, blueTankWeapon);
                 GL.Translate(0.05 / 4, 0.1 / 4, -0.001f);
-                GL.Rotate(tank.angleDula+180.0f, 0, 0, -4.0f);
+                GL.Rotate(tank.angleDula + 180.0f, 0, 0, -4.0f);
                 GL.Begin(BeginMode.Quads);
 
                 GL.TexCoord3(1.0f, 0.0f, 0.0f); GL.Vertex2(0.4f / 4, 0.0f / 4);
@@ -251,21 +254,36 @@ namespace client
                 GL.End();
                 GL.PopMatrix();
 
-                
+
             }
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
             GL.LoadIdentity();
             GL.PushMatrix();
-            GL.PointSize(25);
+            GL.PointSize(15);
             GL.Color3(1.0f, 1.0f, 0.0f);
+            //Console.WriteLine(initialX + " " + bulletYt);
             GL.Begin(BeginMode.Points);
-            Console.WriteLine(initialX + " " + bulletYt);
             GL.Vertex2(initialX, bulletYt);
             GL.End();
             GL.PopMatrix();
 
             GL.LoadIdentity();
+
+            if (boom == true)
+            {
+                GL.LoadIdentity();
+                GL.PushMatrix();
+                GL.PointSize(25);
+                GL.Color3(1.0f, 0.0f, 0.0f);
+                //Console.WriteLine(initialX + " " + bulletYt);
+                GL.Begin(BeginMode.Points);
+                GL.Vertex2(boomX, boomY);
+                GL.End();
+                GL.PopMatrix();
+
+                GL.LoadIdentity();
+            }
 
         }
 
@@ -277,7 +295,7 @@ namespace client
             timeInitial = DateTime.Now;
 
             aTimer = new Timer(1000);
-            aTimer.Elapsed += delegate { drawBullet(tank, angle, tank.x, tank.y); };
+            aTimer.Elapsed += delegate { drawBullet(tank, angle, tank.x, tank.y + 0.01); };
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
         }
@@ -335,29 +353,36 @@ namespace client
                 aTimer.AutoReset = false;
                 return;
             }
+            
             TimeSpan currentTime = DateTime.Now - timeInitial;
             double V0 = 0.01;
             int t = 10; //currentTime.Seconds * 1000 + currentTime.Milliseconds;
-            double g = 9.8;
+            double g = 1.0;
 
             double Vx0 = V0 * Math.Cos(angle * 180.0 / Math.PI);
             double Vy0 = V0 * Math.Sin(angle * 180.0 / Math.PI);
             
-            double Yt = Y0 + Vy0 * initialX - g * initialX * initialX / 2;
-
+            double Yt;
+            Yt = Y0 + Vy0 * initialX - g * initialX * initialX / 2;
             initialX = initialX + V0;
             double yterrain;
             yterrain = 0.1 * Math.Sin(initialX / rand);
-
-           //Console.WriteLine(yterrain + " " + rand  + " " + Yt);
-            if (Math.Abs(yterrain - Yt)  < 1.0f )
+            bulletYt = Yt;
+            //Console.WriteLine(yterrain + " " + rand  + " " + Yt);
+            if (Math.Abs(yterrain - Yt)  < 0.25f )
             {
                 Console.WriteLine("Boom");
+                if ( boom == false ){
+                    boom = true;
+                    boomX = initialX;
+                    boomY = bulletYt;
+                }
+                
                 aTimer.Enabled = false;
                 aTimer.AutoReset = false;
                 return;
             }
-            
+
             //Console.WriteLine("Math.Cos(angle): " + Math.Cos(angle));
             //Console.WriteLine("angle: " + angle);
             //Console.WriteLine("t: " + t);
@@ -365,8 +390,8 @@ namespace client
             //Console.WriteLine("Xt: " + Xt + "; Yt: " + Yt);
             //Console.WriteLine("-------------------------");
 
+            Console.WriteLine(Yt);
             
-            bulletYt = Yt;
             /*
             GL.LoadIdentity();
             GL.PushMatrix();
