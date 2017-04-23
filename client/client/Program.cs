@@ -17,7 +17,6 @@ namespace client
         private int greenTankWeapon;
         private int blueTankWeapon;
         private Timer aTimer;
-        private int nEventsFired = 0;
         private DateTime timeInitial;
         private double bulletXt;
         private double bulletYt;
@@ -29,17 +28,6 @@ namespace client
             tank1 = new Tank(1.0f , 0.0f , 0);
             tank2 = new Tank(0.3f, 0, 0);
             VSync = VSyncMode.On;
-        }
-
-        public static Func<TResult> Apply<TResult, TArg>(Func<TArg, TResult> func, TArg arg)
-        {
-            return () => func(arg);
-        }
-
-        public static Func<TResult> Apply<TResult, TArg1, TArg2>(Func<TArg1, TArg2, TResult> func,
-                                                                  TArg1 arg1, TArg2 arg2)
-        {
-            return () => func(arg1, arg2);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -187,9 +175,8 @@ namespace client
             Matrix4 modelview = Matrix4.LookAt(Vector3.Zero, Vector3.UnitZ, Vector3.UnitY);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref modelview);
-            drawTerrain(ClientRectangle.Width / 100, ClientRectangle.Height / 80, ClientRectangle.Height / 20, 0.9);
-            drawTank(tank1, 1,e);
-            drawTank(tank2, 2,e);
+            drawTerrain(ClientRectangle.Width / 100, ClientRectangle.Height / 50, ClientRectangle.Height / 7, 0.95);
+            drawTank(tank1, e);
             SwapBuffers();
         }
         public void drawTank(Tank tank, int number, FrameEventArgs e)
@@ -308,15 +295,14 @@ namespace client
             
             GL.PushMatrix();
             GL.Color3(1.0f, 1.0f, 0.0f);
-            GL.LineWidth(2);
+            GL.LineWidth(5);
             GL.Begin(BeginMode.LineStrip);
-            for (double i = 0; i < points.Count; i++)
+            for (double i = 0, j = -1; i < points.Count; i++, j += 0.1)
             {
                 double pointValue = Convert.ToDouble(points[(int)i]);
-                double x = i / 10;
+                double x = j;
                 double y = pointValue / 1000;
                 GL.Vertex2(x, y);
-                Console.WriteLine(x + " " + y);
             }
             GL.End();
             GL.PopMatrix();
